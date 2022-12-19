@@ -1,5 +1,14 @@
 server:
   port: 8020
+spring:
+  thymeleaf:
+    cache: false
+    prefix: file:src/main/resources/templates/
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
 logging:
   level:
     com.ll.example: debug
