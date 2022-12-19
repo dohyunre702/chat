@@ -2,6 +2,7 @@ package com.ll.example.app_2022_12_19.controller;
 
 import com.ll.example.app_2022_12_19.ChatMessage;
 import com.ll.example.app_2022_12_19.RsData;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Controller
+@Slf4j
 @RequestMapping("/chat")
 public class ChatController {
     private List<ChatMessage> chatMessages = new ArrayList<>();
@@ -17,6 +19,11 @@ public class ChatController {
     public record WriteMessageRequest(String authorName, String content) {
     }
     public record WriteMessageResponse(long id) { //jdk 16+
+    }
+
+    @GetMapping("/room")
+    public String showRoom() {
+        return "chat/room";
     }
 
     @PostMapping("/writeMessage")
