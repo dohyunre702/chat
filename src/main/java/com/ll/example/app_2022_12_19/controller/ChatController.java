@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/chat")
@@ -31,12 +32,33 @@ public class ChatController {
                 new WriteMessageResponse(message.getId()));
     }
 
+    public record MessagesRequest(@RequestParam(defaultValue = "0") Long fromId) {
+    }
+    public record MessagesResponse(List<ChatMessage> messages, long count) {
+    }
+
     @GetMapping("/messages") //메세지 가져오기
     @ResponseBody
-    public RsData<List<ChatMessage>> messages() {
+    public RsData<MessagesResponse> messages(MessagesRequest req) {
+        List<ChatMessage> messages = chatMessages;
+
+        //번호가 입력되었다면
+        if(req.fromId != null) {
+            //해당 번호의 채팅메시지가 전체 리스트에서의 배열인덱스 번호를 구한다
+            //없다면 -1
+            int index = IntStream.range(0, messages.size())
+                    .filter(i -> chatMessages.get(i).getId() == req.fromId)
+                    .findFirst()
+                    .orElse(-1);
+
+            //만약 index가 있다면 0번 인덱스부터 index 번까지 제거한 리스트를 반환
+            if(index != -1) {
+                messages = messages.subList(index + 1, messages.size());
+            }
+        }
         return new RsData<>(
                 "S-1",
                 "성공",
-                chatMessages);
+                new MessagesResponse(chatMessages, chatMessages.size()));
     }
 }
